@@ -39,10 +39,7 @@ public class ShowDialog {
                 Intent intent = new Intent(context,Matching.class);
                 Activity.startActivity(intent);
                 Activity.finish();
-                //테스트
-                //테스트
-                //테테스음ㄴ
-
+                
             }
         });
 // Cancel 버튼 이벤트
