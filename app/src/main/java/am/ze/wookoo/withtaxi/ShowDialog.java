@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ShowDialog {
 
@@ -33,13 +37,39 @@ public class ShowDialog {
 // OK 버튼 이벤트
         dialog.setPositiveButton("예", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                JSONObject stationLists = new JSONObject();
+                try {
+                    stationLists.put("온양온천역","onyang");
+                    stationLists.put("신창역","sinchang");
+                    stationLists.put("경희학성","kyunghee");
+                    stationLists.put("학교후문","schoolback");
+                    stationLists.put("향설 2관","hyang2");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(context,"오류가 발생했습니다.",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                StartPoint = StartPoint.trim();
+                StopPoint = StopPoint.trim();
 
-                //배차 시작
-                Toast.makeText(context,"매칭을 시도합니다.",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context,Matching.class);
-                Activity.startActivity(intent);
-                Activity.finish();
-                
+                try {
+                    String TempURL = stationLists.get(StartPoint)+"_to_" + stationLists.get(StopPoint)+"+"+PhoneNum;
+                    //배차 시작
+                    Toast.makeText(context,"매칭을 시도합니다." + TempURL,Toast.LENGTH_SHORT).show();
+                    Log.d("임시 URL",TempURL);
+
+                    Intent intent = new Intent(context,Matching.class);
+
+                    Activity.startActivity(intent);
+                    Activity.finish();
+                } catch (JSONException e) {
+                    Toast.makeText(context,"오류가 발생했습니다" ,Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+
+
             }
         });
 // Cancel 버튼 이벤트

@@ -3,13 +3,16 @@ package am.ze.wookoo.withtaxi;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class ReadyToMatching extends AppCompatActivity {
     private String StartPoint;
@@ -44,13 +47,18 @@ public class ReadyToMatching extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String RidingPerson = RiderPersonSpinner.getSelectedItem().toString();
-                String PhoneNum = String.valueOf(PhoneNumEdit.getText());
-                ShowDialog swd = new ShowDialog(StartPoint,StopPoint,PhoneNum,RidingPerson,ReadyToMatching.this,ReadyToMatching.this);
-                swd.Show();
+                String PhoneNum = String.valueOf(PhoneNumEdit.getText()).trim();
+                Log.d("연락처 ",PhoneNum);
+                if (!Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$", PhoneNum)){ //정규 표현식을 사용하여 전화번호가 올바르지 않다면
+
+                    Toast.makeText(ReadyToMatching.this,"올바를 번호를 입력해주세요",Toast.LENGTH_SHORT).show(); //오류를 띄운다.
+                }
+                else{
+                    ShowDialog swd = new ShowDialog(StartPoint,StopPoint,PhoneNum,RidingPerson,ReadyToMatching.this,ReadyToMatching.this); //오류가 발생하지 않을 경우 Dialog 를 띄운다.
+                    swd.Show();
+                }
+
             }
         });
-
-
-
     }
 }
