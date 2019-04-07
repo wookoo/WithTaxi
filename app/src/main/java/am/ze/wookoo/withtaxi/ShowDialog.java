@@ -53,12 +53,13 @@ public class ShowDialog {
                 StopPoint = StopPoint.trim();
 
                 try {
-                    String TempURL = stationLists.get(StartPoint)+"_to_" + stationLists.get(StopPoint)+"+"+PhoneNum;
+                    String TempURL = stationLists.get(StartPoint)+"_to_" + stationLists.get(StopPoint)+"+"+PhoneNum+"/";
                     //배차 시작
-                    Toast.makeText(context,"매칭을 시도합니다." + TempURL,Toast.LENGTH_SHORT).show();
-                    Log.d("임시 URL",TempURL);
+                    Toast.makeText(context,"매칭을 시도합니다." ,Toast.LENGTH_SHORT).show();
+                    Log.d("임시 URL",TempURL); //디버그용 URL
 
                     Intent intent = new Intent(context,Matching.class);
+                    intent.putExtra("URL",TempURL); //intent 에 접속 URL 전송
 
                     Activity.startActivity(intent);
                     Activity.finish();
