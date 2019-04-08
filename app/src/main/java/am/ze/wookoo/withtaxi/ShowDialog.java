@@ -60,6 +60,8 @@ public class ShowDialog {
 
                     Intent intent = new Intent(context,Matching.class);
                     intent.putExtra("URL",TempURL); //intent 에 접속 URL 전송
+                    intent.putExtra("StartPoint",StartPoint);
+                    intent.putExtra("StopPoint",StopPoint);
 
                     Activity.startActivity(intent);
                     Activity.finish();

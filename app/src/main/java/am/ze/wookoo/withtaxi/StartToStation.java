@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,10 @@ public class StartToStation extends AppCompatActivity {
         ButtonLists.add(StopHyang2);
         ButtonLists.add(StopBack);
         ButtonLists.add(StopKyung);
+
+        AdView mAdView = findViewById(R.id.adView3);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         for (final Button buttons : ButtonLists){
             buttons.setOnClickListener(new View.OnClickListener() {

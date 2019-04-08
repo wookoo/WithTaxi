@@ -11,6 +11,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -30,6 +33,10 @@ public class ReadyToMatching extends AppCompatActivity {
         StopPoint = intent.getStringExtra("StopPoint");
         RiderPersonSpinner = findViewById(R.id.spinner);
         PhoneNumEdit = findViewById(R.id.InputPhone);
+
+        AdView mAdView = findViewById(R.id.adView4);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
 
         final ArrayList<String> RidePerson = new ArrayList<String>();

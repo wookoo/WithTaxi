@@ -12,6 +12,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
@@ -22,9 +26,13 @@ import java.net.URISyntaxException;
 
 public class Matching extends AppCompatActivity {
     private Button StopMatching;
-    private String server = "192.168.35.187";
-    private int Port = 8080;
+    private String server = "withtaxi.wookoo.ze.am";
+    private int Port = 5555;
     private String URL = String.format("ws://%s:%d/ws/chat/",server,Port);
+    private String StartPoint;
+    private String StopPoint;
+
+    private InterstitialAd mInterstitialAd;
 
     private WebSocketClient mWebSocketClient;
 
@@ -37,17 +45,20 @@ public class Matching extends AppCompatActivity {
         URL += intent.getStringExtra("URL");
         Log.d("받은 URL",URL);
         URL = URL.trim();
+        StartPoint = intent.getStringExtra("StartPoint");
+        StopPoint = intent.getStringExtra("StopPoint");
         //소켓 객체 만든후 핸들러 만들고 핸들러에다가 일 시키게 하고
         //StropMatching 눌렀으면 그 객체 죽이기 > 객체 =NULL;
 
+        connectWebSocket();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                connectWebSocket();
-            //여기에 소켓 객체 만든 후 작업 하기
-            }
-        },1000);
+        AdView mAdView = findViewById(R.id.adView5);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mInterstitialAd = new InterstitialAd(Matching.this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-4210582747176451/1284205789");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
 
@@ -63,8 +74,13 @@ public class Matching extends AppCompatActivity {
                         //매칭 취소 작업
                         mWebSocketClient.close();
 
+                        mWebSocketClient = null;
+
                         //객체 죽여버리기
                         Toast.makeText(Matching.this,"매칭이 취소되었습니다.",Toast.LENGTH_SHORT).show();
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        }
                         finish();
                     }
                 });
@@ -125,10 +141,18 @@ public class Matching extends AppCompatActivity {
                                 dialog.setTitle("매칭 안내");
                                 dialog.setMessage("매칭에 성공하였습니다.\n" + receiveMessage +"로 상대방에게 문자를 보내보세요.");
 
-                                dialog.setPositiveButton("바로 전화걸기", new DialogInterface.OnClickListener() {
+                                dialog.setPositiveButton("바로 문자보내기", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent("android.intent.action.DIAL", Uri.parse("tel:"+receiveMessage));
+                                        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+receiveMessage));
+                                        String message = "안녕하세요, "+StartPoint +"에서 "+StopPoint+"까지 같이 합승 할 사람입니다!";
+                                        intent.putExtra("sms_body", message);
+
+
+                                        if (mInterstitialAd.isLoaded()) {
+                                            mInterstitialAd.show();
+                                        }
                                         startActivity(intent);
+
                                         finish();
 
                                     }
@@ -136,6 +160,9 @@ public class Matching extends AppCompatActivity {
                                 dialog.setNegativeButton("확인", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        if (mInterstitialAd.isLoaded()) {
+                                            mInterstitialAd.show();
+                                        }
                                         finish();
                                     }
                                 });
@@ -164,6 +191,9 @@ public class Matching extends AppCompatActivity {
             public void onError(Exception e) {
 
                 Log.i("Websocket", "Error " + e.getMessage());
+                Toast.makeText(Matching.this,"오류가 발생하였습니다",Toast.LENGTH_SHORT).show();
+                mWebSocketClient.close();
+                finish();
 
             }
 
